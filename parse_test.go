@@ -32,7 +32,7 @@ func TestParse(t *testing.T) {
 
 		assert.Equal(1, len(options))
 		assert.Equal("", options[0].name)
-		assert.Equal(regStr, options[0].reg.String())
+		assert.Equal(regStr, options[0].reg)
 	})
 
 	t.Run("should parse a named param", func(t *testing.T) {
@@ -56,7 +56,7 @@ func TestParse(t *testing.T) {
 
 		assert.Equal(1, len(options))
 		assert.Equal("_id", options[0].name)
-		assert.Equal(regStr, options[0].reg.String())
+		assert.Equal(regStr, options[0].reg)
 	})
 
 	t.Run("should parse a named param with strings", func(t *testing.T) {

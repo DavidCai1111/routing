@@ -3,6 +3,6 @@ test:
 
 cover:
 	rm -rf *.coverprofile
-	go test -coverprofile=routing.coverprofile
+	go test -v -coverprofile=routing.coverprofile
 	gover
 	go tool cover -html=routing.coverprofile

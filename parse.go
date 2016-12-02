@@ -16,7 +16,7 @@ var (
 type option struct {
 	name string
 	str  string
-	reg  *regexp.Regexp
+	reg  string
 }
 
 func parse(frag string) []option {
@@ -61,7 +61,7 @@ func parse(frag string) []option {
 			return options
 		}
 
-		return []option{option{name: name, reg: regexp.MustCompile(frag)}}
+		return []option{option{name: name, reg: regexp.MustCompile(frag).String()}}
 	}
 
 	panic(fmt.Sprintf("routing: Invalid frag: %v", frag))
