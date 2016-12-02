@@ -18,7 +18,8 @@ func TestDefine(t *testing.T) {
 		root.Define("/")
 
 		assert.Equal(1, len(root.children))
-		assert.Equal("", root.children[option{str: ""}].str)
+
+		assert.Equal(root, root.children[option{str: ""}].parent)
 	})
 
 	t.Run("should panic when url does not start with /", func(t *testing.T) {
@@ -37,12 +38,7 @@ func TestDefine(t *testing.T) {
 
 		assert.Equal(2, len(root.children))
 
-		assert.Equal("test1", root.children[option{str: "test1"}].str)
-		assert.Equal("", root.children[option{str: "test1"}].name)
 		assert.Equal(root, root.children[option{str: "test1"}].parent)
-
-		assert.Equal("test2", root.children[option{str: "test2"}].str)
-		assert.Equal("", root.children[option{str: "test2"}].name)
 		assert.Equal(root, root.children[option{str: "test2"}].parent)
 	})
 
@@ -55,28 +51,15 @@ func TestDefine(t *testing.T) {
 
 		assert.Equal(1, len(root.children))
 
-		assert.Equal("test1", root.children[option{str: "test1"}].str)
-		assert.Equal("", root.children[option{str: "test1"}].name)
 		assert.Equal(root, root.children[option{str: "test1"}].parent)
 
 		r := root.children[option{str: "test1"}]
 
 		assert.Equal(4, len(r.children))
 
-		assert.Equal("test2", r.children[option{str: "test2"}].str)
-		assert.Equal("", r.children[option{str: "test2"}].name)
 		assert.Equal(r, r.children[option{str: "test2"}].parent)
-
-		assert.Equal("test3", r.children[option{str: "test3"}].str)
-		assert.Equal("", r.children[option{str: "test3"}].name)
 		assert.Equal(r, r.children[option{str: "test3"}].parent)
-
-		assert.Equal("test3", r.children[option{str: "test3", name: "_id"}].str)
-		assert.Equal("_id", r.children[option{str: "test3", name: "_id"}].name)
 		assert.Equal(r, r.children[option{str: "test3", name: "_id"}].parent)
-
-		assert.Equal("test4", r.children[option{str: "test4", name: "_id"}].str)
-		assert.Equal("_id", r.children[option{str: "test4", name: "_id"}].name)
 		assert.Equal(r, r.children[option{str: "test4", name: "_id"}].parent)
 	})
 
@@ -89,12 +72,7 @@ func TestDefine(t *testing.T) {
 
 		assert.Equal(2, len(root.children))
 
-		assert.Equal(regStr, root.children[option{reg: regStr}].reg)
-		assert.Equal("", root.children[option{reg: regStr}].name)
 		assert.Equal(root, root.children[option{reg: regStr}].parent)
-
-		assert.Equal(regStr, root.children[option{reg: regStr, name: "_id"}].reg)
-		assert.Equal("_id", root.children[option{reg: regStr, name: "_id"}].name)
 		assert.Equal(root, root.children[option{reg: regStr, name: "_id"}].parent)
 	})
 
@@ -106,20 +84,9 @@ func TestDefine(t *testing.T) {
 
 		assert.Equal(4, len(root.children))
 
-		assert.Equal("test1", root.children[option{str: "test1"}].str)
-		assert.Equal("", root.children[option{str: "test1"}].name)
 		assert.Equal(root, root.children[option{str: "test1"}].parent)
-
-		assert.Equal("test2", root.children[option{str: "test2"}].str)
-		assert.Equal("", root.children[option{str: "test2"}].name)
 		assert.Equal(root, root.children[option{str: "test2"}].parent)
-
-		assert.Equal("test1", root.children[option{str: "test1", name: "_id"}].str)
-		assert.Equal("_id", root.children[option{str: "test1", name: "_id"}].name)
 		assert.Equal(root, root.children[option{str: "test1", name: "_id"}].parent)
-
-		assert.Equal("test2", root.children[option{str: "test2", name: "_id"}].str)
-		assert.Equal("_id", root.children[option{str: "test2", name: "_id"}].name)
 		assert.Equal(root, root.children[option{str: "test2", name: "_id"}].parent)
 	})
 }
