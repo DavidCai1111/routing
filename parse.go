@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -19,7 +20,7 @@ type option struct {
 }
 
 func parse(frag string) []option {
-	if normalStrReg.MatchString(frag) {
+	if frag == "" || normalStrReg.MatchString(frag) {
 		return []option{option{str: frag}}
 	}
 
@@ -36,8 +37,8 @@ func parse(frag string) []option {
 
 	var name string
 
-	nameStrReg.ReplaceAllStringFunc(frag, func(n string) string {
-		name = n
+	frag = nameStrReg.ReplaceAllStringFunc(frag, func(n string) string {
+		name = n[1:]
 		return ""
 	})
 
@@ -63,5 +64,5 @@ func parse(frag string) []option {
 		return []option{option{name: name, reg: regexp.MustCompile(frag)}}
 	}
 
-	return nil
+	panic(fmt.Sprintf("routing: Invalid frag: %v", frag))
 }
