@@ -167,46 +167,46 @@ func TestMatch(t *testing.T) {
 		root := New()
 
 		root.Define("/", 1)
-		n, p, ok := root.Match("/")
+		c, p, ok := root.Match("/")
 
 		assert.True(ok)
 		assert.Zero(len(p))
-		assert.Equal(1, n.Callback.(int))
+		assert.Equal(1, c.(int))
 	})
 
 	t.Run("should match one level url", func(t *testing.T) {
 		root := New()
 
 		root.Define("/fav.icon", 1)
-		n, p, ok := root.Match("/fav.icon")
+		c, p, ok := root.Match("/fav.icon")
 
 		assert.True(ok)
 		assert.Zero(len(p))
-		assert.Equal(1, n.Callback.(int))
+		assert.Equal(1, c.(int))
 	})
 
 	t.Run("should match named params", func(t *testing.T) {
 		root := New()
 
 		root.Define("/:_id", 1)
-		n, p, ok := root.Match("/123")
+		c, p, ok := root.Match("/123")
 
 		assert.True(ok)
 		assert.Equal(1, len(p))
 		assert.Equal("123", p["_id"])
-		assert.Equal(1, n.Callback.(int))
+		assert.Equal(1, c.(int))
 	})
 
 	t.Run("should match named params for regex", func(t *testing.T) {
 		root := New()
 
 		root.Define("/:_id(\\w{3,30})", 1)
-		n, p, ok := root.Match("/haha")
+		c, p, ok := root.Match("/haha")
 
 		assert.True(ok)
 		assert.Equal(1, len(p))
 		assert.Equal("haha", p["_id"])
-		assert.Equal(1, n.Callback.(int))
+		assert.Equal(1, c.(int))
 	})
 
 	t.Run("should match string first", func(t *testing.T) {
@@ -214,22 +214,22 @@ func TestMatch(t *testing.T) {
 
 		root.Define("/haha", 1)
 		root.Define("/(\\w{3,30})", 2)
-		n, p, ok := root.Match("/haha")
+		c, p, ok := root.Match("/haha")
 
 		assert.True(ok)
 		assert.Equal(0, len(p))
-		assert.Equal(1, n.Callback.(int))
+		assert.Equal(1, c.(int))
 	})
 
 	t.Run("should match encoded url", func(t *testing.T) {
 		root := New()
 
 		root.Define("/:_id(@\\w+)", 1)
-		n, p, ok := root.Match("/%40haha")
+		c, p, ok := root.Match("/%40haha")
 
 		assert.True(ok)
 		assert.Equal(1, len(p))
 		assert.Equal("@haha", p["_id"])
-		assert.Equal(1, n.Callback.(int))
+		assert.Equal(1, c.(int))
 	})
 }

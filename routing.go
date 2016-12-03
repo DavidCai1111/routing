@@ -8,7 +8,7 @@ import (
 )
 
 // Version is this package's version number.
-const Version = "1.0.0"
+const Version = "1.1.0"
 
 var (
 	normalStrReg    = regexp.MustCompile(`^[\w\.-]+$`)
@@ -23,14 +23,16 @@ type option struct {
 	reg  string
 }
 
-// Node represents a node in a trie.
+// Node represents a node in the trie tree. In this package, you
+// can only get the root node by the New() func. And then define and
+// match URL with it.
 type Node struct {
-	Callback interface{}
+	callback interface{}
 	parent   *Node
 	children map[option]*Node
 }
 
-// New returns a new root Node.
+// New returns a new root Node. you can define and match URL with it.
 func New() *Node {
 	return &Node{
 		parent:   nil,
@@ -38,7 +40,22 @@ func New() *Node {
 	}
 }
 
-// Define defines a url
+// Define defines a URL and some meta infomation (interface{}) on it.
+//
+// support signatures:
+//
+// - string: `/hello`
+//
+// - separated string: `/a|b|c`
+//
+// - regex: `/([0-9a-f]{24})`
+//
+// - named parameter: `/:id`
+//
+// - named separated string: `/:id(a|b|c)`
+//
+// - named regex: `/:id([0-9a-f]{24})`
+//
 func (n *Node) Define(u string, callback interface{}) {
 	n.define(strings.Split(checkURL(u), "/")[1:], callback)
 }
@@ -60,7 +77,7 @@ func (n *Node) define(frags []string, callback interface{}) {
 
 	if len(frags) == 1 {
 		for _, node := range nodes {
-			node.Callback = callback
+			node.callback = callback
 		}
 
 		return
@@ -71,8 +88,11 @@ func (n *Node) define(frags []string, callback interface{}) {
 	}
 }
 
-// Match matchs a url
-func (n *Node) Match(u string) (*Node, map[string]string, bool) {
+// Match matchs a URL and get the meta infomation defined on it. You should
+// always check the third return value at first to know whether the URL is
+// matched. The first return value is the URL's defined meta infomation and the
+// second return value is the map of named parameters.
+func (n *Node) Match(u string) (interface{}, map[string]string, bool) {
 	u, err := url.QueryUnescape(u)
 
 	if err != nil {
@@ -82,7 +102,7 @@ func (n *Node) Match(u string) (*Node, map[string]string, bool) {
 	return n.match(map[string]string{}, strings.Split(checkURL(u), "/")[1:])
 }
 
-func (n *Node) match(p map[string]string, frags []string) (*Node, map[string]string, bool) {
+func (n *Node) match(p map[string]string, frags []string) (interface{}, map[string]string, bool) {
 	frag := frags[0]
 
 	for opt, child := range n.children {
@@ -94,11 +114,11 @@ func (n *Node) match(p map[string]string, frags []string) (*Node, map[string]str
 			}
 
 			if len(frags) == 1 {
-				return child, p, true
+				return child.callback, p, true
 			}
 
-			if c, p, ok := child.match(p, frags[1:]); ok {
-				return c, p, ok
+			if cb, p, ok := child.match(p, frags[1:]); ok {
+				return cb, p, ok
 			}
 		}
 	}
